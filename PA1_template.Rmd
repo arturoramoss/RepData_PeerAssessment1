@@ -7,7 +7,7 @@ output:
 
 
 ## Loading and preprocessing the data
-```{r}
+```{r load_data}
 data <- read.csv("activity.csv")
 data$date_d <- as.Date.factor(data[[2]])
 library(ggplot2)
@@ -17,7 +17,7 @@ data_b <- aggregate(.~interval,data[c(1,3)], FUN=mean, na.rm=TRUE)
 
 
 ## What is mean total number of steps taken per day?
-```{r}
+```{r Mean_total_per_day}
 ggplot(data_a, aes(steps)) + geom_histogram()  + labs(title = "Distribution of steps count per day")
 mean1 <- as.character(floor(mean(data_a$steps)))
 median1 <- as.character(median(data_a$steps))
@@ -29,7 +29,7 @@ The mean of total number of steps taken per day is `r mean1`, and de median is `
 
 
 ## What is the average daily activity pattern?
-```{r}
+```{r Mean_per_interval}
 ggplot(data_b, aes(interval,steps)) + geom_line() + labs(title = "Average steps per interval")
 max_interval <- as.character(data_b[data_b$steps == max(data_b$steps),1])
 max_steps <- as.character(floor(data_b[data_b$steps == max(data_b$steps),2]))
@@ -46,7 +46,7 @@ nas <- sum(is.na(data[1]))
 There are `r nas` missing values in the dataset.
 
 Now we create a new dataset filling the missing values with te average per interval.
-```{r}
+```{r Mean_total_per_day_missing_filled}
 data2 <- merge(data, data_b, by.x = "interval", by.y = "interval")
 data2[is.na(data2[2]),2] <- data2[is.na(data2[2]),5]
 data2_a <- aggregate(.~date,data2[2:3], FUN=sum)
@@ -60,7 +60,7 @@ The new mean of total steps per day is `r mean2`, and the median is `r median2`.
 
 ## Are there differences in activity patterns between weekdays and weekends?
 We generate a new variable that indicates if is a weekday or a weekend.
-```{r}
+```{r Mean_per_interval_Weekdays}
 data2$day <- ifelse(weekdays(data2$date_d)=="domingo" | weekdays(data2$date_d)=="sábado","weekend","weekday")
 
 data2_c <- aggregate(.~interval+day,data2[c(1,2,6)], FUN=mean)
